@@ -1,76 +1,102 @@
 <template>
-  <div id="app">
-    <label-mockup/>
-    <br>
-    <input
-      v-if="!errorMessage"
-      v-model="inputValue"
-      class="input"
-      type="text"
-      placeholder="Lot Number">
-    &nbsp;
-    <button
-      v-if="inputValue!==''&&!errorMessage"
-      class="button"
-      @click="saveLabelToImage()"
-    >
-      save label image
-    </button>
-    <br>
-    <div
-      v-if="errorMessage"
-      class="error-message">{{ errorMessage }}
+  <div id="label-mockup" ref="label-mockup">
+    <barcode :id="'vendor'" :value="'GENTRY HARDWARE'" />
+    <barcode :id="'model'" :value="'GT-9403D-4H-KD'" />
+    <barcode :id="'lot-number'" :value="lotNumber" />
+    <div>GENTRY HARDWARE PRODUCTS CO., LTD.</div>
+    <div>PRODUCT: ALUM. IV STAND</div>
+    <div>REF: GT-9403D-4H-KD</div>
+    <div v-if="!!lotNumber">{{ `LOT: ${lotNumber}` }}</div>
+    <div v-else class="warning">LOT: PENDING</div>
+    <br />
+    <div>NO SPECIAL STORAGE REQUIREMENTS</div>
+    <div>NO EXPIRATION DATE</div>
+  </div>
+
+  <div id="control-wrapper">
+    <div id="input-wrapper">
+      <input
+        v-model="lotNumber"
+        id="lot-number-input"
+        type="text"
+        placeholder="ENTER LOT NUMBER"
+        class="py-1 px-2"
+      />
+    </div>
+    <div v-if="!!lotNumber" id="button-wrapper">
+      <button id="save-button" @click="saveLabel">SAVE LABEL</button>
     </div>
   </div>
 </template>
 
 <script>
-import {saveAs} from 'file-saver'
-import html2Canvas from 'html2canvas'
-import LabelMockup from './components/LabelMockup'
-import {mapState} from 'vuex'
+import htmlToImage from "html-to-image";
+import FileSaver from "file-saver";
+
+import Barcode from "./components/Barcode.vue";
 
 export default {
-  name: 'App',
-  components: {LabelMockup},
+  name: "App",
+  components: { Barcode },
   data() {
-    return {
-      errorMessage: '',
-    }
-  },
-  computed: {
-    ...mapState(['lotNumber', 'mockupHandle']),
-    inputValue: {
-      set(value) {
-        this.$store.commit('setLotNumber', value)
-      },
-      get() {
-        return this.lotNumber
-      },
-    },
+    return { lotNumber: null };
   },
   methods: {
-    saveLabelToImage() {
-      return html2Canvas(this.mockupHandle)
-        .then(canvas => {
-          canvas.getContext('2d')
-          const fileName = `${this.lotNumber}.png`
-          const saveFn = blob => saveAs(blob, fileName)
-          canvas.toBlob(saveFn)
-        })
-        .catch(error => {
-          this.errorMessage = error.message
-        })
+    async saveLabel() {
+      const element = this.$refs["label-mockup"];
+      const blob = await htmlToImage.toBlob(element);
+      FileSaver.saveAs(blob, `${this.lotNumber}.png`);
     },
   },
-}
+};
 </script>
 
-<style scoped>
-.error-message {
-  color: red;
-  font-family: monospace;
-  font-size: 165%;
-  font-weight: bold;
+<style lang="postcss">
+#label-mockup {
+  @apply p-4;
+  @apply w-max-content;
+  @apply border border-solid border-black;
+  @apply bg-white;
+}
+
+.warning {
+  @apply text-red-600;
+}
+
+#control-wrapper {
+  @apply mt-2;
+  @apply flex flex-wrap;
+}
+
+#input-wrapper {
+  @apply py-2 w-full max-w-lg;
+}
+
+#lot-number-input {
+  @apply shadow appearance-none border rounded;
+  @apply text-gray-700 leading-tight;
+}
+
+#lot-input:focus {
+  @apply outline-none shadow-outline;
+}
+
+#button-wrapper {
+  @apply py-2 w-full;
+}
+
+#save-button {
+  @apply bg-blue-500;
+  @apply rounded;
+  @apply text-white font-bold;
+  @apply py-2 px-4;
+}
+
+#save-button:hover {
+  @apply bg-blue-700;
+}
+
+#save-button:focus {
+  @apply outline-none;
 }
 </style>

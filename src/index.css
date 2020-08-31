@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+  @apply p-4;
+  @apply font-mono font-bold text-xl;
+}
