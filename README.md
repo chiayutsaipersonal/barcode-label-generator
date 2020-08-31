@@ -1,21 +1,5 @@
 # barcode-label-generator
 
-## Project setup
-```
-npm install
-```
+generate a high resolution barcode label image for printing
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+clone files from repository and serve the index.html

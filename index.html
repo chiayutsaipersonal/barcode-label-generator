@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcode Label Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/barcodes/JsBarcode.code128.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
+  <link rel="icon" href="/favicon.ico" />
+  <!-- base style normalizing borrowed from tailwindcss -->
+  <link href='https://unpkg.com/tailwindcss@1.7.6/dist/base.css' rel="stylesheet">
+  <link href='style.css' rel="stylesheet">
+</head>
+
+<body>
+  <div id="app">
+    <div id="label-mockup" ref="label-mockup">
+      <img id="supplier">
+      <img id="model">
+      <img v-if="!!lotNumber" id="lot-number">
+      <div v-else class="warning">LOT NUMBER MISSING</div>
+      <div>GENTRY HARDWARE PRODUCTS CO., LTD.</div>
+      <div>PRODUCT: ALUM. IV STAND</div>
+      <div>REF: GT-9403D-4H-KD</div>
+      <div v-if="!!lotNumber">{{`LOT: ${lotNumber}`}}</div>
+      <div v-else class="warning">LOT: PENDING</div>
+      <br>
+      <div>NO SPECIAL STORAGE REQUIREMENTS</div>
+      <div>NO EXPIRATION DATE</div>
+    </div>
+
+    <div id="control-wrapper">
+      <div id="input-wrapper">
+        <input v-model="lotNumber" id="lot-number-input" type="text" placeholder="ENTER LOT NUMBER">
+      </div>
+      <div v-if="!!lotNumber" id="button-wrapper">
+        <button id="save-button" @click="saveLabel">
+          SAVE LABEL
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        lotNumber: null
+      }
+    },
+    watch: {
+      lotNumber() {
+        if (!!this.lotNumber) {
+          this.$nextTick(() => {
+            this.renderBarcode('#lot-number', this.lotNumber)
+          })
+        }
+      },
+    },
+    mounted() {
+      this.renderBarcode('#supplier', 'GENTRY HARDWARE')
+      this.renderBarcode('#model', 'GT-9403D-4H-KD')
+    },
+    methods: {
+      renderBarcode(selector, labelText) {
+        JsBarcode(selector, labelText, {
+          format: 'CODE128',
+          margin: 0,
+          marginBottom: 20,
+          height: 60,
+          font: 'monospace',
+          fontSize: 20,
+          fontOptions: 'bold',
+          textAlign: 'left',
+          textMargin: 0,
+        })
+      },
+      saveBlobToFile(blob) {
+        saveAs(blob, `${this.lotNumber}.png`)
+      },
+      async saveLabel() {
+        const element = this.$refs["label-mockup"]
+        const canvas = await html2canvas(element)
+        canvas.getContext('2d')
+        const blob = await canvas.toBlob(this.saveBlobToFile)
+      },
+    },
+  })
+</script>
+
+</html>

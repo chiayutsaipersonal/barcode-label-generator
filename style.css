@@ -1,0 +1,65 @@
+#app {
+  padding: 1em;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+#label-mockup {
+  width: max-content;
+  padding: 1em;
+  border: 1px solid black;
+}
+
+.warning {
+  color: #e53e3e;
+}
+
+#control-wrapper {
+  margin-top: 0.5em;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#input-wrapper {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 100%;
+}
+
+#lot-number-input {
+  padding: 0.5em 0.75em 0.5em 0.75em;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  appearance: none;
+  border-width: 1px;
+  border-radius: 0.25rem;
+  line-height: 1.25;
+  color: #4a5568;
+}
+
+#lot-number-input:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+#button-wrapper {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  width: 100%;
+}
+
+#save-button {
+  padding: 0.5em 1em;
+  background-color: #63b3ed;
+  border-radius: 0.25rem;
+  color: white;
+  font-weight: 700;
+}
+
+#save-button:hover {
+  background-color: #2b6cb0;
+}
+
+#save-button:focus {
+  outline: none;
+}
