@@ -77,7 +77,7 @@ export default {
   @apply text-gray-700 leading-tight;
 }
 
-#lot-input:focus {
+#lot-number-input:focus {
   @apply outline-none shadow-outline;
 }
 
